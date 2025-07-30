@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+
+{% block title %}
+    Watch List
+{% endblock %}
+
+{% block body %}
+    <div class="d-flex flex-row">
+        {% for list in watchlists %}
+            <div class="card m-2" style="width: 18rem;">
+                {% if list.auction.image %}
+                    <img src="{{list.auction.image.url}}" class="card-img-top" alt="{{list.auction.title}}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{list.auction.title}}</h5>
+                    <p class="card-text">{{list.auction.description}}</p>
+                    <a href="{% url 'listing' list.auction.id %}" class="btn btn-primary">See Details</a>
+                </div>
+            </div>
+        {% empty %}
+            No active Listing
+        {% endfor %}
+    </div>
+{% endblock %}

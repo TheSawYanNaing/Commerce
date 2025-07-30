@@ -1,0 +1,65 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{auction.title}}
+{% endblock %}
+
+{% block body %}
+    {% if winner %}
+        {% if winner.user == request.user %}
+            <p class="bg-primary p-2">You won this auction</p>
+        {% else %}
+            <p class="bg-primary p-2">{{winner.user.username}} won this auction</p>
+        {% endif %}
+    {% endif %}
+    {% if isOwner and auction.active %}
+        <a href="{% url 'close' auction.id %}" class="btn btn-primary">Close Auction</a>
+    {% endif %}
+    <div class="d-flex flex-row align-items-center">
+        <h1>{{auction.title}}</h1>
+        {% if request.user.is_authenticated %}
+            {% if onWatch %}
+                <a class="btn btn-danger" href="{% url 'removeWatchlist' auction.id %}">Remove from WatchList</a>
+            {% else %}
+                <a class="btn btn-dark" href="{% url 'addWatchlist' auction.id %}">Add to WatchLIst</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% if auction.category %}
+        <p class="d-inline p-2 fs-3 bg-dark text-white">{{auction.category}}</p>
+    {% endif %}
+    {% if auction.image %}
+        <img class="d-block my-2 img-fluid" src={{auction.image.url}} alt="{{auction.title}}" />
+    {% endif %}
+    <p>Starting Price : {{auction.price}}</p>
+    <p>{{auction.description}}</p>
+    <p>Current Maximum Bid : {{maxBid}}</p>
+    {% if request.user.is_authenticated and auction.active %}
+        <form action="{% url 'bid' auction.id %}" method="post">
+            {% csrf_token %}
+            <label for="bid" class="form-label">Place A bid</label>
+            <input type="number" name="bid" class="form-control" id="bid"/>
+            <button type="submit" class="btn btn-dark my-1">Place</button>
+        </form>
+        {% if bidError %}
+            <p class="bg-danger text-white p-2">{{bidError}}</p>
+        {% endif %}
+    {% endif %}
+    <div class="my-3">
+        <h2>Comments</h2>
+        {% for comment in comments %}
+            <h4>{{comment.writer.username}}</h4>
+            <p>{{comment.description}}</p>
+        {% empty %}
+            <span>No Comment</span>
+        {% endfor %}
+    </div>
+
+    {% if request.user.is_authenticated and auction.active %}
+        <form action="{% url 'comment' auction.id %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="comment" placeholder="Add A Comment" class="form-control" />
+            <button type="submit" class="btn btn-dark my-1">Comment</button>
+        </form>
+    {% endif %}
+{% endblock %}

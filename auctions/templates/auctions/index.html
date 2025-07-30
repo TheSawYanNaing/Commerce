@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+
+    <div class="d-flex flex-row">
+        {% for list in listings %}
+            <div class="card m-2" style="width: 18rem;">
+                {% if list.image %}
+                    <img src="{{list.image.url}}" class="card-img-top" alt="{{list.title}}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{list.title}}</h5>
+                    <p class="card-text">{{list.description}}</p>
+                    <a href="{% url 'listing' list.id %}" class="btn btn-primary">See Details</a>
+                </div>
+            </div>
+        {% empty %}
+            No active Listing
+        {% endfor %}
+    </div>
+{% endblock %}
